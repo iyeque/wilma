@@ -54,6 +54,13 @@
      - `CitizenshipJuryChallenge.t.sol`: `test_H3_CannotBeAddedAsSigner`, `test_H3_CannotSubmitTransactionIfSigner`
    - All 60 tests passing (commit `4c8de0e`)
 
+8. **Deployment Preparation** – ✅ **COMPLETE** (2026-03-09)
+   - Updated `script/DeployAll.s.sol` (cleaned, ready for broadcasting)
+   - Added testnet RPC configs to `foundry.toml` (Sepolia, Holesky, Arbitrum Sepolia)
+   - Created `docs/DEPLOYMENT.md` with environment variables, step-by-step instructions, post-deployment steps
+   - All 60 tests still passing; script compiles successfully.
+   - Note: Signer addresses in the script are placeholders; replace with real addresses before deploying to any network.
+
 ---
 
 ## 🧩 Repository Separation
@@ -65,3 +72,13 @@ On 2026-03-09, OpenClaw workspace identity/config files were moved to a dedicate
 - **Elysium repo:** Now clean — only Elysium project files and memory.
 
 **Future tasks:** Keep OpenClaw-specific configuration in the wilma repository; Elysium work stays in the Elysium repository. The local workspace still contains both (OpenClaw needs the files), but the Elysium git no longer tracks them.
+
+---
+
+## 📋 Implementation Plan & Progress
+
+- Each task is broken into small steps, coded, tested, and committed.
+- Use this file to track detailed subtasks and status.
+- Progress: All 8 tasks complete ✅
+
+**Next:** Proceed to testnet deployment using `foundry` and `docs/DEPLOYMENT.md`.
