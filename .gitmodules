@@ -1,0 +1,6 @@
+[submodule "genai"]
+	path = genai
+	url = https://github.com/iyeque/genai
+[submodule "nexus"]
+	path = nexus
+	url = https://github.com/iyeque/nexus
