@@ -34,7 +34,7 @@ BOOKING_INFO = {
     "name": "MAX MURAYA",
     "email": "mmmuraya@outlook.com",
     "phone": "+971581518024",
-    "party_size": "2 adults + 1 child (2-year-old)",
+    "party_size": "3 adults + 1 child (2-year-old)",
     "preferred_date": "2026-03-21",
     "fallback_date": "2026-03-22",
     "card": {
@@ -48,8 +48,7 @@ URL = "https://booking.aquaventureworld.com/experiences/waterpark-day-passes"
 
 class AquaventureBooker:
     def __init__(self):
-        self.retry_delays = [30, 60, 120, 240, 480]  # seconds
-        self.max_retries = 20
+        self.retry_delay = 5  # seconds between retries (brute-force)
         self.start_time = None
         self.success = False
 
@@ -95,21 +94,18 @@ class AquaventureBooker:
         return False
 
     def run(self):
-        """Main booking loop with retry logic."""
+        """Main booking loop with brute-force retry (no cap, no backoff)."""
         self.start_time = time.time()
         log_message("INFO", "=== BOOKING ATTEMPT STARTED ===")
         log_message("INFO", f"Target: {URL}")
         log_message("INFO", f"Party: {BOOKING_INFO['party_size']}")
         log_message("INFO", f"Preferred date: {BOOKING_INFO['preferred_date']}")
+        log_message("INFO", "Retry mode: brute-force (5s interval, no cap)")
 
         attempt_num = 0
-        while not self.success and attempt_num < self.max_retries:
+        while not self.success:
             attempt_num += 1
             elapsed = time.time() - self.start_time
-            if elapsed > 1200:  # 20 minutes max
-                log_message("WARNING", "20 minute timeout reached")
-                break
-
             log_message("INFO", f"Attempt #{attempt_num} (elapsed: {int(elapsed)}s)")
             if self.attempt_booking():
                 self.success = True
@@ -117,21 +113,8 @@ class AquaventureBooker:
                 append_summary("RESULT", "✅ SUCCESS - Tickets secured")
                 break
             else:
-                # Retry with backoff
-                delay_idx = min(attempt_num - 1, len(self.retry_delays) - 1)
-                delay = self.retry_delays[delay_idx]
-                remaining = 1200 - elapsed
-                if remaining <= 0:
-                    log_message("WARNING", "Timeout exceeded")
-                    break
-                if delay > remaining:
-                    delay = remaining
-                log_message("INFO", f"Retrying in {delay} seconds...")
-                time.sleep(delay)
-
-        if not self.success:
-            log_message("FAILURE", "All attempts exhausted without success")
-            append_summary("RESULT", "❌ FAILED - Could not secure booking after maximum retries")
+                log_message("INFO", f"Retrying in {self.retry_delay} seconds...")
+                time.sleep(self.retry_delay)
 
         log_message("INFO", "=== BOOKING ATTEMPT ENDED ===")
         return self.success

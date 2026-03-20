@@ -13,7 +13,7 @@ The subagent should be spawned to run the booking automation. When called at the
    - **Name:** MAX MURAYA
    - **Email:** mmmuraya@outlook.com
    - **Phone:** +971581518024
-   - **Party:** 2 adults + 1 child (2-year-old free). If only 3 adults + 1 child available, take that.
+   - **Party:** 3 adults + 1 child (2-year-old free). If only 2 adults + 1 child available, take that.
    - **Date:** Prefer March 21, 2026 (any date before March 22 works)
    - **Payment:** Card 4251996048727389 (Exp 08/28, CVV 484) - for reservation only
 3. Retry with exponential backoff (30s, 60s, 120s...) for up to 20 minutes if failures occur

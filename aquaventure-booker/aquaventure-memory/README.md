@@ -5,15 +5,14 @@ This directory contains logs and state for the Aquaventure Waterpark ticket book
 ## Strategy
 - Target: https://booking.aquaventureworld.com/experiences/waterpark-day-passes
 - Release: Daily 9:00 AM UAE time (UTC+4)
-- Priority: MAX MURAYA (2 adults + 1 child, prefer 21 March 2026)
+- Priority: MAX MURAYA (3 adults + 1 child, prefer 21 March 2026)
 - Contact: mmmuraya@outlook.com, +971581518024
 - Card: 4251996048727389 (Exp 08/28, CVV 484) - stored in memory only
 
 ## Plan
-1. Today (18 March): Check if window still open after 9 AM (unlikely before). If not, prepare for tomorrow.
-2. Starting 19 March: Attempt daily at exactly 9:00 AM UAE time
-3. Retry: exponential backoff (30s, 60s, 120s...) for up to 20 minutes
-4. Stop condition: Success on any date (prefer 21st), or 22 March deadline
+1. Starting 19 March: Attempt daily at exactly 9:00 AM UAE time
+2. Retry: brute-force 5-second interval, no time limit, until success or sold out
+3. Stop condition: Success on any date (prefer 21st), or site declares sold out
 
 ## Notes
 - Today is Thursday, March 18, 2026
