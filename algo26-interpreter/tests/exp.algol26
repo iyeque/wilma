@@ -1,4 +1,0 @@
-proc test(x: real) => real = exp(-x);
-begin
-  println(test(0.5));
-end

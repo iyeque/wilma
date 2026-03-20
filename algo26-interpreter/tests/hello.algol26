@@ -1,3 +1,0 @@
-begin
-  println("Hello, ALGOL 26 World!");
-end
