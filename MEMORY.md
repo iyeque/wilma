@@ -114,3 +114,109 @@ While awaiting Lyria access, implemented **Stable Audio 2.0** (Stability AI) via
 - ✅ Booking script (`aquaventure-booker/booking_agent_optimized.py`) present with correct credentials and strategy
 
 **Preparation Outcome:** All systems GO. No restarts required. Booking attempt will proceed as scheduled at 9:00 AM Dubai. Confidence: HIGH.
+
+## Critical Configuration Recovery & Infrastructure Restart (2026-03-25 Evening)
+
+**Discovery:** On March 25 evening, it was discovered that:
+- The Aquaventure booking cron job was **missing** from `/home/iyeque/.openclaw/cron/jobs.json`
+- Several cron jobs lacked explicit model overrides and defaulted to the expired `upstage/solar-pro-3:free`
+- The browser service (Xvfb + Chromium) was **not running**
+- The `qwen-portal/coder-model` OAuth token had expired (March 22), causing fallback to Solar Pro 3
+
+**Actions Taken:**
+1. **Added missing Aquaventure booking job** with schedule `58 8 * * *` (Asia/Dubai), agent `aquaventure-booker`, and explicit model
+2. **Fixed model overrides** on all remaining cron jobs to use `qwen-portal/coder-model`
+3. **Switched Aquaventure job model** to `openrouter/stepfun/step-3.5-flash:free` (currently working free tier)
+4. **Started browser service manually:**
+   - Xvfb on display :99 (PID 10151)
+   - Chromium with remote debugging on port 18801 (PID 10155)
+5. **Verified CDP and gateway health:**
+   - CDP: Chrome/146.0.7680.80, protocol 1.3, ws://localhost:18801/devtools/…
+   - Gateway: `{"ok":true,"status":"live"}`
+6. **Recorded detailed checkpoint** in `memory/2026-03-25-checkpoint.md`
+
+**Current State:** All infrastructure verified, configurations corrected. Next automated booking attempt: **March 26, 9:00 AM Dubai**.
+
+**Open Issues:**
+- Qwen OAuth token needs refresh; using stepfun as primary for booking (non-blocking)
+- Browser service auto-start ✅ COMPLETED (systemd user services: xvfb.service, chromium.service)
+- Solar Pro 3 removed from fallback chain ✅ COMPLETED
+
+---
+
+## Browser Service Auto-Start Implementation (2026-03-25 late night)
+
+**Problem:** Browser service required manual start after reboot; could cause missed booking if system restarted before 9:00 AM.
+
+**Solution:** Created systemd user services for reliable auto-start:
+- `xvfb.service` – runs Xvfb on display :99 (Type=simple, foreground)
+- `chromium.service` – runs Chromium headless on CDP port 18801; Requires=Avives=xvfb.service
+Both services enabled (`systemctl --user enable`) to start automatically on user login. Services verified running under systemd management (PIDs 18173, 18184).
+
+**Result:** Browser will now auto-start on boot without manual intervention. Services will also restart on failure.
+
+---
+
+## Solar Pro 3 Fallback Cleanup (2026-03-25 late night)
+
+**Problem:** `openrouter/upstage/solar-pro-3:free` remained in `agents.defaults.model.fallbacks` in `openclaw.json`, posing a risk of accidental reuse despite being expired.
+
+**Action:** Removed that entry from the fallbacks array. The fallback chain now starts with `openrouter/stepfun/step-3.5-flash:free` followed by other reliable providers.
+
+**Result:** Solar Pro 3 will no longer be selected as a fallback, eliminating 404 errors from expired model usage.
+
+## Default Model Primary Update (2026-03-25 late night)
+
+**Action:** Changed `agents.defaults.model.primary` from `qwen-portal/coder-model` to `openrouter/stepfun/step-3.5-flash:free` in `openclaw.json`. Moved `qwen-portal/coder-model` into the fallbacks list.
+
+**Rationale:** The qwen OAuth token expired on March 22, making stepfun the more reliable default. This eliminates fallback latency for any agent relying on the default model.
+
+**Result:** All new agent sessions will default to stepfun unless an explicit model is specified.
+
+## Default Model Update (2026-03-25 late night)
+
+**Action:** Changed `agents.defaults.model.primary` from `qwen-portal/coder-model` to `openrouter/stepfun/step-3.5-flash:free` in `openclaw.json`. Moved `qwen-portal/coder-model` into fallbacks list.
+
+**Rationale:** The qwen OAuth token expired (March 22), so stepfun is more reliable as primary. This eliminates fallback latency for all agents that rely on the default model.
+
+**Result:** All new agent sessions will default to stepfun unless an explicit model is specified.
+
+
+## Critical Configuration Recovery (2026-03-25)
+
+**Discovery:** On March 25, it was discovered that the Aquaventure booking cron job was **missing** from `/home/iyeque/.openclaw/cron/jobs.json`. Additionally, several cron jobs lacked explicit model overrides and were still defaulting to the expired `upstage/solar-pro-3:free` model, causing repeated failures.
+
+**Actions Taken:**
+- Added missing cron job `Aquaventure Booking Attempt` (scheduled 08:58 Dubai, agent: `aquaventure-booker`, model: `qwen-portal/coder-model`, timeout: 300s)
+- Applied explicit model overrides to all remaining cron jobs that were using default/expired models:
+  - `whatsapp-precheck-0855`
+  - `daily-wilma-sync`
+  - `Chromium Download Monitor`
+- Verified all 11 cron jobs now use `qwen-portal/coder-model` consistently
+- Confirmed `aquaventure-booker` agent has the required provider configuration for qwen-portal
+
+**Status:** All cron configurations corrected and validated. The next Aquaventure booking attempt will be **March 26, 9:00 AM Dubai** (assuming March 25 window already passed). All critical messaging jobs now use a reliable, working model.
+
+**Lesson:** Periodic audits of cron job configurations are needed to ensure model overrides aren't inadvertently lost during edits. Consider adding a schema validation step to prevent missing required fields like `model`.
+
+## Model Migration to stepfun (2026-03-25 evening)
+
+**Problem:** The 8:50 AM checkpoint job failed with error: "404 No allowed providers are available for the selected model." Investigation revealed that `qwen-portal/coder-model`, while previously working, had an expired OAuth token (as of March 22). The checkpoint file and tests confirmed that `openrouter/stepfun/step-3.5-flash:free` was the only reliably working free-tier model at the time.
+
+**Resolution:** Migrated all cron jobs from the now-unreliable `qwen-portal/coder-model` to the confirmed working `openrouter/stepfun/step-3.5-flash:free`. This included 10 jobs:
+- daily_morning_summary
+- daily-poem-wilmax
+- daily-tech-update
+- whatsapp-precheck-0755
+- whatsapp-precheck-0855
+- daily-wilma-sync
+- mangoma-memory-sync
+- Chromium Download Monitor
+- 8:50 AM checkpoint
+- Model quota check (19:00–23:00)
+
+The Aquaventure Booking Attempt was already using stepfun (adjusted earlier due to qwen OAuth issues).
+
+**Result:** All cron jobs now target a stable, working model. The 8:50 AM checkpoint and other time-critical tasks have a high probability of success starting March 26.
+
+**Recommendation:** Continue monitoring stepfun's availability. If it degrades, we may need to evaluate other providers or implement a dynamic model fallback mechanism.
