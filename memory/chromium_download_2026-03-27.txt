@@ -1,0 +1,29 @@
+CHROMIUM DOWNLOAD MONITOR REPORT
+==================================
+Timestamp: Friday, March 27, 2026 — 5:13 AM (Asia/Dubai)
+
+STATUS: Download is ACTIVE but had a network error and is retrying.
+
+Process Check:
+- git clone process (PID 10798) is RUNNING
+- Started: 04:58 AM (about 15 minutes ago)
+- Command: git -c core.deltaBaseCacheLimit=2g clone --no-checkout --progress https://chromium.googlesource.com/chromium/src.git /mnt/d/nexus/_gclient_src_403x3d1c
+
+Progress Information:
+- Total objects to download: 27,774,731
+- Objects received before failure: 4,848,472
+- Progress: 17.45% complete
+- Data received: ~2.02 GiB
+- Total estimated size: 61.25 GiB
+
+Directory Size:
+- /mnt/d/nexus/_gclient_src_403x3d1c: 44K (currently minimal due to retry state)
+
+Error Detected:
+- "error: RPC failed; curl 56 Send failure: Broken pipe"
+- The process is in retry mode (attempt 2/2)
+
+Current State:
+The download is still running but experienced a network interruption. Git is attempting to recover/resume. The process is active and should continue downloading.
+
+No restart action needed - download is in progress.
