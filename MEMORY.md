@@ -16,7 +16,10 @@ The workspace follows a clean separation pattern:
 
 - **MVI (Minimum Viable Interpreter)** - Complete (2026-03-20): Python implementation with lexer, parser, AST, interpreter. Supports core language: variables, control flow (if/while/for), functions, arrays, records, basic I/O, math builtins.
 - **Roadmap Phase 2-5** - Defined (2026-03-20): Comprehensive plan produced covering type system, modules, probabilistic/causal programming, concurrency, meta-cognition, formal verification, and hardware acceleration. Multi-stage hybrid architecture (Python prototype → Rust production) adopted.
-- **Current:** Phase 2 implementation completed (2026-03-23). Phase 3 implementation underway – probabilistic programming + causal modeling. Already has AST nodes, lexer tokens, parser support for `prob {}`, `sample()`, `given`, `causal`, `verify`. Type system extended with `DistType` and effect tracking. Interpreter runtime added with distribution classes (Bernoulli, Normal, Uniform, Conditional) and ProbModel closure semantics. Test suite demonstrates working Bernoulli/normal/uniform sampling and recursive probabilistic functions.
+- **Phase 2** - Complete (2026-03-23): Full static type system with Hindley-Milner inference, module system, ADTs, row polymorphism. Committed and tagged `phase-2-complete`.
+- **Phase 3** - Complete (2026-03-24): Probabilistic programming and causal modeling. Implemented distribution classes (Bernoulli, Normal, Uniform, Conditional), `ProbModel` closures, `sample()`, `given`, `causal`, `verify` constructs. Full test suite demonstrating Bayesian inference and causal queries. Committed with message "feat(phase3): complete probabilistic programming and causal modeling".
+- **Phase 4** - Implementation complete and committed (2026-03-27): Concurrency features including channels (buffered/unbuffered), async procedures, send/receive operations, and cooperative scheduler. Basic `SelectStmt` tests created (pending full implementation). Commit `eaccdd3` pushed to remote: "feat(phase4): implement concurrency with channels, async procs, and scheduler".
+- **Current:** Phase 4 work integrated; pending: `SelectStmt` completion, edge case testing, full scheduler integration refinement. Phase 5 (formal verification + hardware acceleration) next in roadmap.
 
 ## Elysium Governance Smart Contracts
 
@@ -29,7 +32,7 @@ The workspace follows a clean separation pattern:
 
 - **Aquaventure Booker:** Manual attempt on 2026-03-20 failed due to high demand. Implemented full browser automation in `booking_agent_optimized.py` using OpenClaw browser CLI: pre-loads page, waits until 9:00 AM, polls for form, fills and submits. Cron job enabled (8:58 AM) to run the agent with `qwen-portal/coder-model`. 8:50 AM checkpoint verifies browser service. Next attempt: March 23, 9:00 AM Dubai. Hourly quota checks ensure model availability.
 - **Nexus (Chromium fetch):** In progress (~1.6% complete, ~100 GB total). Estimated 2–3 days remaining. Now has an OpenClaw agent wrapper (`nexus`) that can manage fetch, progress checks, and restarts.
-- **ALGOL 26 Phase 2:** Sub-agent spawned to implement full static type system and module system (Hindley-Milner inference, ADTs, row polymorphism, module boundaries). Running in background with Gemini Pro.
+- **ALGOL 26:** Phase 4 (concurrency) completed and pushed. Remote repo: https://github.com/iyeque/genai (branch main, commit eaccdd3). Next steps: implement `SelectStmt` and expand test coverage before moving to Phase 5 (formal verification + hardware acceleration).
 - **Orca SCM Platform:** Full-stack project (FastAPI, React, smart contracts) present in workspace. Now has an OpenClaw agent wrapper (`orca`) to manage Docker services (up/down/status) and contract deployment.
 - **Elysium (elise):** Deployment agent wrapper fixed and functional; contracts stored in `workspace/contracts/`; script in `workspace/script/DeployAll.s.sol`. Ready for Sepolia testnet deployment.
 
