@@ -31,7 +31,7 @@ The workspace follows a clean separation pattern:
 ## Other Active Projects
 
 - **Aquaventure Booker:** Manual attempt on 2026-03-20 failed due to high demand. Implemented full browser automation in `booking_agent_optimized.py` using OpenClaw browser CLI: pre-loads page, waits until 9:00 AM, polls for form, fills and submits. Cron job enabled (8:58 AM) to run the agent with `qwen-portal/coder-model`. 8:50 AM checkpoint verifies browser service. Next attempt: March 23, 9:00 AM Dubai. Hourly quota checks ensure model availability.
-- **Nexus (Chromium fetch):** In progress (~1.6% complete, ~100 GB total). Estimated 2–3 days remaining. Now has an OpenClaw agent wrapper (`nexus`) that can manage fetch, progress checks, and restarts.
+- **Nexus (Chromium fetch):** **Restarted** on March 28 (05:03 AM). Currently at 0% (initial clone stage). Total repository expected: ~27.8M objects, ~61 GiB. Download active; will take 2-3 days depending on bandwidth. Has an OpenClaw agent wrapper (`nexus`) that manages fetch, progress checks, and automatic restarts on failure.
 - **ALGOL 26:** Phase 4 (concurrency) completed and pushed. Remote repo: https://github.com/iyeque/genai (branch main, commit eaccdd3). Next steps: implement `SelectStmt` and expand test coverage before moving to Phase 5 (formal verification + hardware acceleration).
 - **Orca SCM Platform:** Full-stack project (FastAPI, React, smart contracts) present in workspace. Now has an OpenClaw agent wrapper (`orca`) to manage Docker services (up/down/status) and contract deployment.
 - **Elysium (elise):** Deployment agent wrapper fixed and functional; contracts stored in `workspace/contracts/`; script in `workspace/script/DeployAll.s.sol`. Ready for Sepolia testnet deployment.
@@ -223,3 +223,55 @@ The Aquaventure Booking Attempt was already using stepfun (adjusted earlier due 
 **Result:** All cron jobs now target a stable, working model. The 8:50 AM checkpoint and other time-critical tasks have a high probability of success starting March 26.
 
 **Recommendation:** Continue monitoring stepfun's availability. If it degrades, we may need to evaluate other providers or implement a dynamic model fallback mechanism.
+
+---
+
+## Chromium Download Monitoring Technique (2026-03-26/28)
+
+**Context:** Monitoring large `git clone` operations for the Chromium/src repository (~61 GiB, 27.8M objects) requires understanding of git's multi-stage process.
+
+### Key Indicators
+
+1. **Process State:** The main `git clone --no-checkout` process runs in `D` (uninterruptible I/O wait) state for extended periods. This is **normal** and indicates active network transfer, not a hang.
+
+2. **Object Count:** `git count-objects` in the repository shows unpacked objects. In early stages, this can be 0 even while download is active because pack files are still being received and not yet unpacked.
+
+3. **Pack Files:** Check `.git/objects/pack/` for `*.pack` files. These appear only after significant data has been received. Initially empty is expected.
+
+4. **Network Connection:** The child process `git-remote-https` (or `git remote-https`) maintains an ESTABLISHED TLS connection to `chromium.googlesource.com:443`. Presence of this connection indicates active transfer.
+
+5. **CPU Usage:** Low CPU (1-10%) is typical for network-bound I/O. Higher CPU during `index-pack` phase later.
+
+6. **Directory Size:** The repository root size remains small (tens of KiB) until pack files start accumulating. Once packs appear, size grows rapidly.
+
+### Restart Logic
+
+**Do NOT restart if:**
+- `git clone` or `gclient sync` processes are running
+- `git-remote-https` has an ESTABLISHED connection
+- The repository directory exists with `.git` structure
+
+**Restart only if:**
+- Processes are dead (no `git clone`, `gclient`, or `git-remote-https` running)
+- And no network connection to chromium.googlesource.com from relevant processes
+- And repository is incomplete (no pack files after extended time)
+
+### Observations from Recent Attempts
+
+- **March 24:** Reached 63% completion (~11 GiB) before network timeout; automatic recovery possible?
+- **March 27:** Reached 17.45% (~2.02 GiB) before network error; resumed in retry mode
+- **March 28 (current):** Fresh restart at 0% (04:28 AM). Expected to take 2-3 days on current bandwidth.
+
+### Recommendations
+
+- **Cron frequency:** Every 15 minutes is appropriate (doesn't overload system, catches failures promptly)
+- **No WhatsApp alerts:** This is a low-priority background operation; failures should auto-restart
+- **Thresholds:** Consider flagging if `.git/objects/pack/` remains empty after 30 minutes, or if process is in `D` state with zero network bytes transferred for >1 hour (could use `/proc/<pid>/net/tcp` to verify connection activity)
+- **Logging:** Keep detailed reports per check; these are valuable for post-mortem if download consistently fails at certain sizes
+
+### Future Improvements
+
+- Parse `git clone --progress` output if available (currently suppressed by nohup). Could parse log file for "Receiving objects: X% (Y/Z)" pattern.
+- Use `git fetch --dry-run` to check if objects are already complete? Not applicable mid-clone.
+- Consider resuming interrupted clone via `git fetch --all` if pack files exist, rather than full restart.
+
