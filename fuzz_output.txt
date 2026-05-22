@@ -1,0 +1,7 @@
+error: unrecognized subcommand 'fuzz'
+
+  tip: some similar subcommands exist: 'u', 'f'
+
+Usage: forge [OPTIONS] <COMMAND>
+
+For more information, try '--help'.

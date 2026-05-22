@@ -1,0 +1,31 @@
+2026-03-27 05:37:44 [server] [32minfo[39m: Mangoma server listening on http://0.0.0.0:6070 
+2026-03-27 05:46:10 [music_client] [32minfo[39m: Initializing UnifiedMusicClient: provider=riffusion 
+2026-03-27 05:46:13 [server] [32minfo[39m: Music provider connected: riffusion 
+2026-03-27 05:46:13 [server] [32minfo[39m: Stream state: starting 
+2026-03-27 05:46:13 [stream_runner] [32minfo[39m: Starting stream runner 
+2026-03-27 05:46:13 [stream_runner] [32minfo[39m: Music provider connected 
+2026-03-27 05:46:13 [server] [32minfo[39m: Stream state: streaming 
+2026-03-27 05:50:50 [riffusion_client] [31merror[39m: Generation failed: timeout of 300000ms exceeded 
+file:///home/iyeque/.openclaw/workspace/mangoma/backend/dist/live/utils.js:10
+                    return `${timestamp} [${service}] ${level}: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
+                                                                                                             ^
+
+TypeError: Converting circular structure to JSON
+    --> starting at object with constructor 'Agent'
+    |     property 'sockets' -> object with constructor 'Object'
+    |     property 'localhost:3000:' -> object with constructor 'Array'
+    |     ...
+    |     property '_httpMessage' -> object with constructor 'ClientRequest'
+    --- property 'agent' closes the circle
+    at JSON.stringify (<anonymous>)
+    at Printf.template (file:///home/iyeque/.openclaw/workspace/mangoma/backend/dist/live/utils.js:10:110)
+    at Printf.transform (/home/iyeque/.openclaw/workspace/mangoma/backend/node_modules/logform/printf.js:11:26)
+    at Format.transform (/home/iyeque/.openclaw/workspace/mangoma/backend/node_modules/logform/combine.js:20:24)
+    at Console._write (/home/iyeque/.openclaw/workspace/mangoma/backend/node_modules/winston-transport/modern.js:91:33)
+    at doWrite (/home/iyeque/.openclaw/workspace/mangoma/backend/node_modules/winston-transport/node_modules/readable-stream/lib/_stream_writable.js:390:139)
+    at writeOrBuffer (/home/iyeque/.openclaw/workspace/mangoma/backend/node_modules/winston-transport/node_modules/readable-stream/lib/_stream_writable.js:381:5)
+    at Writable.write (/home/iyeque/.openclaw/workspace/mangoma/backend/node_modules/winston-transport/node_modules/readable-stream/lib/_stream_writable.js:302:11)
+    at DerivedLogger.ondata (/home/iyeque/.openclaw/workspace/mangoma/backend/node_modules/winston/node_modules/readable-stream/lib/_stream_readable.js:629:20)
+    at DerivedLogger.emit (node:events:519:28)
+
+Node.js v22.22.1

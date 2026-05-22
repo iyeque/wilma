@@ -1,0 +1,18 @@
+begin
+  var ch1 := chan int;
+  var ch2 := chan int;
+
+  spawn async proc send_on_ch1() {
+    ch1 <- 42;
+  };
+
+  spawn async proc send_on_ch2() {
+    ch2 <- 99;
+  };
+
+  select {
+    case receive ch1 => println("Got ", ch1);
+    case receive ch2 => println("Got ", ch2);
+    default => println("No channels ready");
+  };
+end

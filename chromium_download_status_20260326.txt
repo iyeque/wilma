@@ -1,0 +1,40 @@
+CHROMIUM DOWNLOAD MONITOR REPORT
+Generated: 2026-03-26 13:51 (Asia/Dubai)
+Status: DOWNLOAD IN PROGRESS
+
+=== PROCESSES ===
+- gclient sync: Running (PID 67780, 1h 9m)
+- git clone: Running (PID 68536, 55m)
+- git index-pack: Running (PID 68685, 17m)
+- Additional git workers: 3 processes
+
+=== DOWNLOAD DIRECTORY ===
+Path: /mnt/d/nexus/_gclient_src_1xi1nl7p
+Current size: 662 MiB (on disk)
+Repository: https://chromium.googlesource.com/chromium/src.git
+
+=== PROGRESS (from log) ===
+Total objects: 27,766,737
+Objects received: 1,175,886 (~4.2%)
+Bytes received: ~702.78 MiB (log shows)
+Estimated total: 61.15 GiB
+
+Progress percentage: ~1.15% (702.78 MiB / 61.15 GiB)
+(Using bytes received, object count: ~4.2%)
+
+=== RECENT LOG TAIL ===
+- Last update: Receiving objects: 4% (1,175,886/27,766,737), 702.78 MiB | 851.00 KiB/s
+- Some network errors observed (early EOF), but recovery appears to be working
+- Speed fluctuates between 500 KB/s - 1.4 MB/s
+
+=== ESTIMATED TIME ===
+Based on current rate (~1 MB/s) and ~60 GB remaining:
+Approximately 17 hours remaining (highly variable)
+
+=== NOTES ===
+- Download is actively progressing despite occasional errors
+- gclient sync initiated at 11:42, still running
+- No action taken - monitoring as requested
+- If download stops, will need to rerun: cd /mnt/d/nexus && gclient sync
+
+=== END REPORT ===

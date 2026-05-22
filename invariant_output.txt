@@ -1,0 +1,7 @@
+error: unrecognized subcommand 'invariant'
+
+  tip: some similar subcommands exist: 'i', 'v', 'in'
+
+Usage: forge [OPTIONS] <COMMAND>
+
+For more information, try '--help'.

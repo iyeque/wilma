@@ -1,0 +1,8 @@
+WhatsApp connectivity status:
+- WhatsApp is enabled, configured, linked, running, and connected.
+- Direct messages are allowlisted for +254725333825 and +971526252152.
+
+Cron jobs status:
+- Unable to retrieve the list of cron jobs due to gateway connection issues. The `openclaw cron list` command failed repeatedly with a gateway error.
+
+— Astra 🤖

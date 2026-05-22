@@ -1,0 +1,53 @@
+# Chromium Download Monitor Report
+**Cron Job ID:** 8dfe0c66-aaed-4ef8-a77c-94c33739aeed
+**Timestamp:** Sunday, March 22nd, 2026 — 4:58 PM (Asia/Dubai) / 2026-03-22 12:58 UTC
+**Check number:** 11
+
+## Status: ACTIVE AND PROGRESSING
+
+### Download Processes
+- **git clone** (PID 4797): Running, ~2 hours 29 minutes runtime
+  - Command: `git -c core.deltaBaseCacheLimit=2g clone --no-checkout --progress https://chromium.googlesource.com/chromium/src.git /mnt/d/nexus/_gclient_src_kn_ga8rj`
+- **git index-pack** (PID 4959): Running, ~2 hours 12 minutes, actively processing
+  - Command: `/usr/lib/git-core/git index-pack --stdin -v --fix-thin --keep=fetch-pack 4797 on OPTIMUS --check-self-contained-and-connected`
+- **gclient sync** (PID 4524): Running, ~2 hours 29 minutes, waiting
+  - Command: `/home/iyeque/.cache/vpython-root.1000/store/python_venv-pfijsosnfv8rj9itqu2p8e6f5s/contents/bin/python3 -s /mnt/d/nexus/depot_tools/gclient.py sync --nohooks`
+
+### Current Progress
+- **Target directory:** `/mnt/d/nexus/_gclient_src_kn_ga8rj`
+- **Current size:** 348 MB (growing)
+- **Git progress:** ~2% complete (580,386 / 27,730,825 objects)
+- **Remote status:** Transfer in progress - packfile being built
+- **Estimated total size:** ~61.02 GB (from remote measurement)
+- **Completion estimate:** **0.57%** (348 MB / 61 GB)
+- **Progress since last check (15 min ago at 4:43 PM):** Size increased from 341 MB to 348 MB (+7 MB)
+- **Progress rate:** ~7 MB per 15 minutes = ~28 MB/hour
+- **Remaining:** ~60.67 GB
+
+### Active Network/CPU Activity
+- `git index-pack` is CPU-active, processing received objects
+- Pack file `tmp_pack_YSb7Fa` (or similar) showing ongoing writes
+- Multiple `git-remote-https` connections transferring data
+
+### Analysis
+Download is making steady progress through the packfile creation stage. The `index-pack` process is actively working through the received objects. Current throughput suggests this phase will take many more hours before completion.
+
+At the current rate of ~28 MB/hour, the remaining ~60.7 GB would take approximately **2,167 hours** (~90 days). However, this rate is highly variable - the `index-pack` phase is CPU-bound and may speed up or slow down. Earlier checks showed faster rates (previous report at 4:43 AM showed ~0.93 GB/hour), indicating significant fluctuation.
+
+The earlier high rate (~0.93 GB/hour) may have been during the peak transfer phase. The current slower rate reflects the computational intensity of index-pack processing.
+
+**Total estimated completion:** Still indeterminate but likely 2-3 days total from start (started ~16:29 UTC on March 22).
+
+### Action Taken
+**None** - all systems operating normally. No restart required. All three core processes (git clone, git index-pack, gclient sync) are alive and functioning.
+
+### Next Steps
+- Continue monitoring via 15-minute cron job
+- Watch for `index-pack` completion (pack file stable, process exits, pack file moved to .keep suffix)
+- Then gclient will continue with checkout and hook execution
+- Post-download: full build environment setup will follow
+
+---
+**Note:** This is a fresh restart attempt. Previous attempt(s) with different directory suffixes were superseded.
+
+**No WhatsApp messages sent.** Report logged to agent session only.

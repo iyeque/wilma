@@ -1,0 +1,102 @@
+CHROMIUM DOWNLOAD MONITOR REPORT
+Generated: 2026-03-28 20:44 (Asia/Dubai) / 2026-03-28 16:44 UTC
+Cron Job: 8dfe0c66-aaed-4ef8-a77c-94c33739aeed
+
+=== EXECUTIVE SUMMARY ===
+Status: DOWNLOAD PROCESSES RUNNING BUT NO PROGRESS DETECTED
+⚠️  Warning: Download appears STUCK despite active processes
+Action: No restart performed (processes are running)
+
+=== PROCESSES DETECTED ===
+Found 7 processes matching gclient/fetch/git patterns:
+
+1) /bin/bash -c cd /mnt/d/nexus && /mnt/d/nexus/depot_tools/gclient sync 2>&1
+   PID: 97906, Runtime: ~0 seconds (just started)
+
+2) python3 -s /mnt/d/nexus/depot_tools/gclient.py sync
+   PID: 97907, Runtime: ~4 seconds
+
+3) git -c core.deltaBaseCacheLimit=2g clone --no-checkout --progress https://chromium.googlesource.com/chromium/src.git /mnt/d/nexus/_gclient_src_pg5kxaff
+   PID: 102108, Runtime: 1h 24m (STARTED: ~19:00? Check inconsistency)
+   Note: Process shows significant CPU time but directory remains empty
+
+4) /usr/lib/git-core/git remote-https origin https://chromium.googlesource.com/chromium/src.git
+   PID: 102109, Runtime: 1h 24m
+
+5) /usr/lib/git-core/git-remote-https origin https://chromium.googlesource.com/chromium/src.git
+   PID: 102110, Runtime: 1h 24m
+
+Additional git workers: 2 more processes (based on count)
+
+=== DOWNLOAD DIRECTORY ANALYSIS ===
+Primary directory: /mnt/d/nexus/_gclient_src_pg5kxaff
+Total size: 44 KiB (on disk)
+Contents:
+  - .git/ (standard git repository structure)
+  - .git/hooks/ (sample hook files only)
+  - .git/objects/ (EMPTY - 0 bytes)
+  - .git/refs/, .git/info/, etc. (basic structure only)
+
+No packfiles, no objects, no actual source code downloaded.
+
+=== PROGRESS CALCULATION ===
+Expected total size (from historical data): ~61.15 GiB (61,270+ MiB)
+Current downloaded size: ~0.04 MiB (mostly git infrastructure)
+Progress percentage: 0.00% (0.04 / 61,270)
+
+Alternative metric (objects): 0 / 27,766,737 objects = 0%
+
+=== COMPARISON WITH HISTORICAL DATA ===
+Last successful monitoring record (2026-03-26 13:51):
+  - Progress: ~1.15% (702.78 MiB / 61.15 GiB)
+  - Processes: gclient sync (running 1h 9m), git clone (55m), git index-pack (17m)
+  - State: Download actively progressing despite occasional errors
+
+Current state (2026-03-28 20:44):
+  - No actual progress after 1h 24m of git clone runtime
+  - Objects directory empty
+  - No network connections observed
+  - ⚠️ Download is STUCK
+
+=== ROOT CAUSE ANALYSIS ===
+Git clone process appears to be stuck in initial handshake phase:
+- Process exists and consumes some CPU time (1h 24m runtime)
+- But no data written to objects directory
+- No established network connections visible
+- Possible causes:
+  * DNS/network connectivity issue to chromium.googlesource.com
+  * Authentication/credential problem
+  * Disk I/O issue or permission problem on /mnt/d/nexus
+  * Git protocol negotiation stall
+  * Firewall/proxy blocking
+
+Historical error (from chromium_download.log):
+  FileNotFoundError: [Errno 2] No such file or directory: '/mnt/d/nexus/src'
+  This suggests previous gclient run tried to move a non-existent directory.
+
+=== STALE STATE DETECTED ===
+Found stale PID files:
+  - /mnt/d/nexus/fetch.pid (PID 20672, timestamp Mar 28 00:04)
+  - /mnt/d/nexus/gclient.pid (PID 26912, timestamp Mar 28 04:02)
+These processes are not running. PID files should be cleaned up.
+
+=== ACTION RECOMMENDATION ===
+Given that processes are technically running but making zero progress:
+  - Current cron policy: Do NOT restart (processes exist)
+  - However, manual intervention is strongly advised:
+    1) Check network connectivity to chromium.googlesource.com
+    2) Verify /mnt/d/nexus is writable and has sufficient space (>100GB)
+    3) Kill the stuck git clone process(es) manually
+    4) Clean up the partially created _gclient_src_pg5kxaff directory
+    5) Run a fresh gclient sync from scratch
+
+If this state persists in next monitoring cycle (processes running but still no data), consider implementing forced restart after threshold.
+
+=== MONITORING METADATA ===
+Monitor: Chromium Download Monitor
+Cron Job ID: 8dfe0c66-aaed-4ef8-a77c-94c33739aeed
+Node: (running on main session)
+Workspace: /home/iyeque/.openclaw/workspace
+Timestamp: 2026-03-28 20:44:52 +04:00
+
+=== END REPORT ===
