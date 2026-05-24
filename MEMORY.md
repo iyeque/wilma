@@ -172,7 +172,7 @@ Both services enabled (`systemctl --user enable`) to start automatically on user
 
 **Action:** Changed `agents.defaults.model.primary` from `qwen-portal/coder-model` to `openrouter/stepfun/step-3.5-flash:free` in `openclaw.json`. Moved `qwen-portal/coder-model` into the fallbacks list.
 
-**Rationale:** The qwen OAuth token expired on March 22, making stepfun the more reliable default. This eliminates fallback latency for any agent relying on the default model.
+**Rationale:** The qwen OAuth token expired, making stepfun the more reliable default. This eliminates fallback latency for any agent relying on the default model.
 
 **Result:** All new agent sessions will default to stepfun unless an explicit model is specified.
 
@@ -232,7 +232,7 @@ The Aquaventure Booking Attempt was already using stepfun (adjusted earlier due 
 
 ### Key Indicators
 
-1. **Process State:** The main `git clone --no-checkout` process runs in `D` (uninterruptible I/O wait) state for extended periods. This is **normal** and indicates active network transfer, not a hang.
+1. **Process State:** The main `git clone` or `gclient sync` process typically runs in `D` (uninterruptible I/O wait) state for extended periods. This is **normal** and indicates active network transfer, not a hang.
 
 2. **Object Count:** `git count-objects` in the repository shows unpacked objects. In early stages, this can be 0 even while download is active because pack files are still being received and not yet unpacked.
 
@@ -275,3 +275,14 @@ The Aquaventure Booking Attempt was already using stepfun (adjusted earlier due 
 - Use `git fetch --dry-run` to check if objects are already complete? Not applicable mid-clone.
 - Consider resuming interrupted clone via `git fetch --all` if pack files exist, rather than full restart.
 
+---
+
+## 2026-05-23: LLM Free-tier Model Quota Check Results
+
+- **qwen-portal/coder-model:** Not allowed.
+- **xai/grok-4:** Accepted, but failed with 403 (no credits/licenses).
+- **stepfun/step-3.5-flash:free:** Not allowed (and failed with 401 "User not found" during an attempt).
+
+**Conclusion:** None of the tested free-tier models are currently usable for automated tasks.
+
+**Action for Aquaventure booking agent:** A reliable, non-free-tier model should be secured for the Aquaventure booking agent by 9:00 AM tomorrow.
